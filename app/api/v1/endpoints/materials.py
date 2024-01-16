@@ -1,11 +1,14 @@
-from fastapi import FastAPI, Depends
+from typing import List
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.schemas.material import Material, MaterialCreate
+from app.api import deps
 
+router = APIRouter()
 
-app = FastAPI()
-
-@app.post("/materials/", response_model=Material)
-def create_material(material: MaterialCreate, db: Session = Depends(get_db)):
-    ...
+@router.get("/", response_model=List[Material])
+def get_materials(
+    controller: MaterialController = Depends(deps.get_controller(MaterialController)),
+):
+    return controller.get_all()
